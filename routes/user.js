@@ -40,20 +40,31 @@ router.get('/pageProfile', (req, res) => {
 
 
 
-
-
 router.post('/userSignup', async (req, res) => {
     try {
-        const saltRounds = 10;
         const user = new User(req.body);
-        user.password= await bcrypt.hash(req.body.password,saltRounds)
-        user.save()
-        res.send(user)
+        var UserEmail = req.body.email;
+        User.findOne({ email: UserEmail }, async function (err, result) {
+            if (err) {
+                res.send(err)
+            }
+            if (result) {
+                res.render('signup', {
+                    message: 'email is already saved'
+                })
+            }
+            else {
+                const saltRounds = 10;
+                user.password = await bcrypt.hash(req.body.password, saltRounds)
+                user.save()
+                res.render('login')
 
+            }
+        })
     }
     catch (e) {
         res.send({
-            message: 'User already exists',
+            message: 'failed',
             data: e.message
         })
 
@@ -63,31 +74,36 @@ router.post('/userSignup', async (req, res) => {
 
 
 
-router.post('/userLogin',async(req, res) => {
+router.post('/userLogin', async (req, res) => {
     try {
         const userEmail = req.body.email;
-        const user= await User.findOne({ email: userEmail })
-        console.log({user});
+        const user = await User.findOne({ email: userEmail })
         if (user) {
             const validPassword = await bcrypt.compare(req.body.password, user.password);
-            console.log({validPassword});
-            if (validPassword) {
-                res.send('valid password')
-              
-            } else {
-                res.send('invalid password')
-             
-            }
-          } else {
-            res.send('user not found')
-            
-          }
+            if (validPassword == true) {
+                res.render('home', {
+                    message: `Hello ${user.name}`
+                })
 
-           
-     
+            } else {
+                res.render('login', {
+                    message: 'invalid password'
+                })
+
+            }
+        } else {
+            res.render('signup', {
+                message: 'user not found'
+            })
+            
+
+        }
+
+
+
     }
     catch (e) {
-        console.log('failed',e);
+        console.log('failed', e);
         res.status(404).send({
             message: 'failed',
             data: e.message
