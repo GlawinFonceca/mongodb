@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const app = express()
 const router=require('./routes/user')
 require('./database/mongodbConnection');
+require('dotenv').config()
 const port =process.env.PORT
 
 

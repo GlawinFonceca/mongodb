@@ -44,7 +44,7 @@ router.post('/userSignup', async (req, res) => {
     try {
         const user = new User(req.body);
         var UserEmail = req.body.email;
-        User.findOne({ email: UserEmail }, async function (err, result) {
+        User.findOne({ email: UserEmail }, async function (err, result) {//checking whether email is already present in databse
             if (err) {
                 res.send(err)
             }
@@ -53,7 +53,7 @@ router.post('/userSignup', async (req, res) => {
                     message: 'email is already saved'
                 })
             }
-            else {
+            else {//encrypting password and saving the user to the database
                 const saltRounds = 10;
                 user.password = await bcrypt.hash(req.body.password, saltRounds)
                 user.save()
@@ -77,8 +77,8 @@ router.post('/userSignup', async (req, res) => {
 router.post('/userLogin', async (req, res) => {
     try {
         const userEmail = req.body.email;
-        const user = await User.findOne({ email: userEmail })
-        if (user) {
+        const user = await User.findOne({ email: userEmail })//fecthing email in databse
+        if (user) {//if present verfying the password
             const validPassword = await bcrypt.compare(req.body.password, user.password);
             if (validPassword == true) {
                 res.render('home', {
@@ -118,11 +118,13 @@ router.post('/userLogin', async (req, res) => {
 
 router.post('/userProfile', (req, res) => {
     try {
-        User.findOne({ email: req.body.email }, function (err, result) {
+        User.findOne({ email: req.body.email }, function (err, result) {//fecthing the user in database
             if (err) {
-                res.send(err.message)
+                res.render('login',{
+                    message :'User not found please login'
+                })
             } else {
-                res.send(result)
+                res.render('home',result)
             }
         })
 
