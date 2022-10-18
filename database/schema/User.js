@@ -36,11 +36,14 @@ const UserSchema = mongoose.Schema({
         trim: true,
         minlength: 10,
 
-        }
+    }
+},
+    {
+        timestamps: true
 })
 
 
 
-const User =mongoose.model('User',UserSchema);
+const User = mongoose.model('User', UserSchema);
 
 module.exports = User;

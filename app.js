@@ -6,8 +6,8 @@ const app = express()
 const router=require('./routes/user')
 require('./database/mongodbConnection');
 require('dotenv').config()
+const cookieParser = require('cookie-parser')
 const port =process.env.PORT
-
 
 const viewPath = path.join(__dirname, '../mongodb/views');
 const headerPath = path.join(__dirname, '../mongodb/views/partials');
@@ -18,6 +18,7 @@ hbs.registerPartials(headerPath);
 
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(express.static(viewPath))
 app.use(router);
 
