@@ -2,8 +2,8 @@ const express = require('express');
 const { isBuffer } = require('util');
 const router = express.Router();
 const User = require('../database/schema/User')
-const update = require('../helper/userUpdate')
-const signup = require('../helper/userSignup')
+const updateValidation = require('../helper/userUpdate')
+const signupValidation = require('../helper/userSignup')
 const bcrypt = require('bcrypt');
 const validate = require('validator')
 
@@ -33,7 +33,7 @@ router.get('/pageLogin', (req, res) => {
 
 router.get('/editProfile', (req, res) => {
     res.render('editProfile', {
-        title: 'Profile Page'
+        title: 'Edit Page'
     })
 })
 
@@ -46,9 +46,8 @@ router.post('/userSignup', async (req, res) => {
             { minLength: 6, minUppercase: 1, minSymbols: 1, returnScore: false, minNumbers: 1 });
         const userPhone = validate.isLength(req.body.phone, { min: 10, max: 10 });
         //passing name,email,password and phone number to userSignup function
-        const isValid = signup(userName, userEmail, userPassword, userPhone)
-        console.log(isValid);
-        if (isValid === true) {
+        const isValid = await signupValidation(userName, userEmail, userPassword, userPhone)
+        if (isValid.status === true) {
             //checking whether email is already present in databse
             User.findOne({ email: req.body.email }, async function (err, result) {
                 if (err) {
@@ -77,7 +76,7 @@ router.post('/userSignup', async (req, res) => {
         }
     }
     catch (e) {
-        res.send({
+        res.send({ 
             message: 'failed',
             data: e.message
         })
@@ -94,7 +93,7 @@ router.post('/userLogin', async (req, res) => {
             const validPassword = await bcrypt.compare(req.body.password, user.password);
             if (validPassword == true) {
                 res.cookie('UserLogin', req.body.email, { maxAge: 900000, httpOnly: true })
-                res.render('home', {
+                res.render('viewProfile', {
                     message: `Hello ${user.name}`
                 })
             } else {
@@ -154,12 +153,14 @@ router.post('/editProfile', async (req, res) => {
         //fetching user email id in database    
         const user = await User.findOne({ email: userEmail })
         //sending user, name and phone number to userUpdate function
-        const data = await update(user, req.body.name, req.body.phone)
+        const data = await updateValidation(user, req.body.name, req.body.phone)
         if (data === true) {
             res.render('home', {
                 message: 'Successfully updated',
             })
-
+        }
+        else {
+            throw new Error()
         }
         // if (user) {
         //     //updating user name and phone nuumber

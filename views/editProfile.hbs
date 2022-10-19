@@ -6,19 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile</title>
 </head>
-<style>
-    h5{
-        color: crimson;
-    }
-</style>
+<link rel="stylesheet" href="style.css">
 <body>
 <form method="POST" action="/editProfile">
-{{>header}}
+{{>afterHeader}}
+<br/>
+<h1>{{title}}</h1>
 <br/>
 <br/>
+<div class="container">
 Update Name : <input type="text" name="name"><br/><br/>
 Update Phone Number :<input type="text" name="phone"  maxlength="10" size="25"><br/>
-<input type="submit" value ="Submit">
+<div class="button"><button type="submit" size="25" class="signupbtn">Submit</button></div>
+</div>
 <br/>
 <br/>
 <h5>{{message}}</h5>

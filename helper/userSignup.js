@@ -9,7 +9,7 @@ async function signup(Name,Email,Password,Phone) {
         return {status:false,message:"please enter valid email"}
     }
     else if(Password !==true){
-        return {status:false,message:"Password should contain one symbol,one uppercase letter, one number and minium 6 characters"}
+        return {status:false,message:"Password should contain one symbol,one uppercase letter, one number and minimum 6 characters"}
     }
     else if(Phone !==true){
         return {status:false,message:"Please enter valid number"}
