@@ -76,7 +76,7 @@ router.post('/userSignup', async (req, res) => {
         }
     }
     catch (e) {
-        res.send({ 
+        res.send({
             message: 'failed',
             data: e.message
         })
@@ -153,24 +153,30 @@ router.post('/editProfile', async (req, res) => {
         //fetching user email id in database    
         const user = await User.findOne({ email: userEmail })
         //sending user, name and phone number to userUpdate function
-        const data = await updateValidation(user, req.body.name, req.body.phone)
-        if (data === true) {
-            res.render('home', {
-                message: 'Successfully updated',
-            })
-        }
-        else {
-            throw new Error()
-        }
-        // if (user) {
-        //     //updating user name and phone nuumber
-        //     await User.findByIdAndUpdate(user._id, { name: req.body.name, phone: req.body.phone })
-        //     res.render('home', {
-        //         message: 'Successfully updated',
-        //     })
-        // }
+            const data = await updateValidation(user, req.body.name, req.body.phone);
+            console.log(data);
+            if (data === true) {
+                res.render('home', {
+                    message: 'Successfully updated',
+                })
+            }
 
-    }
+            // if (user) {
+            //     //updating user name and phone nuumber
+            //     await User.findByIdAndUpdate(user._id, { name: req.body.name, phone: req.body.phone })
+            //     res.render('home', {
+            //         message: 'Successfully updated',
+            //     })
+            // }
+
+
+            else {
+                res.render('editProfile',{
+                    message: 'please enter name or phone number'
+                })
+            }
+        }
+    
     catch (e) {
         console.log(e);
         res.render('profile', {
